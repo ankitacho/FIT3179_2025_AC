@@ -2,24 +2,52 @@
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
     "width": 900,
     "height": 500,
-    "title": "Schools in Victoria",
+    "title": "Location of Schools in Victoria (2025) by School Type",
+    "params": [
+      {
+        "name": "typeSchool",
+        "bind": {
+          "input": "select",
+          "options": ["Primary", "Secondary", "Pri/Sec"],
+          "labels": ["Primary", "Secondary", "Primary/Secondary"],
+          "name": "School type (Primary / Secondary): "
+        }
+      }
+    ],
     "layer": [
       {
         "data": {
-          "url": "/Users/ankitachoudhary/Library/CloudStorage/OneDrive-Personal/university/year 3 semester 2/FIT3179/homework tasks/FIT3179 Week 9 Homework/js/victoriaMap.topojson",
+          "url": "https://raw.githubusercontent.com/ankitacho/FIT3179_test/main/FIT3179%20Week%209%20Homework/js/victoriaMap.topojson",
           "format": { "type": "topojson", "feature": "Primary_Integrated_2025" }
         },
         "mark": { "type": "geoshape", "fill": "lightgray", "stroke": "white" }
       },
       {
         "data": {
-          "url": "/Users/ankitachoudhary/Library/CloudStorage/OneDrive-Personal/university/year 3 semester 2/FIT3179/homework tasks/FIT3179 Week 9 Homework/data/schoolLocations.csv"
+          "url": "https://raw.githubusercontent.com/ankitacho/FIT3179_test/main/FIT3179%20Week%209%20Homework/data/schoolLocations.csv"
         },
+        "transform": [
+          { "filter": "datum.School_Type == 'Primary' || datum.School_Type == 'Secondary'|| datum.School_Type == 'Pri/Sec'" },
+          { "filter": "typeSchool == null || datum.School_Type == typeSchool" }
+        ],
         "mark": { "type": "circle" },
         "encoding": {
           "longitude": { "field": "X", "type": "quantitative" },
           "latitude": { "field": "Y", "type": "quantitative" },
-          "tooltip": { "content": "data" }
+          "color": {
+            "field": "School_Type",
+            "type": "nominal",
+            "title": "School Type",
+            "scale": {
+              "domain": ["Primary", "Secondary", "Pri/Sec"],
+              "range": ["#d62728", "#1f77b4", "#2ca02c"]
+            }
+          },
+          "tooltip": [
+            { "field": "School_Name", "type": "nominal", "title": "School Name" },
+            { "field": "School_Type", "type": "nominal", "title": "School Type" },
+            { "field": "LGA_Name", "type": "nominal", "title": "LGA" }
+          ]
         }
       }
     ]
